@@ -57,6 +57,7 @@ public class Robot extends IterativeRobot{
 	private DataInputStream input; //temporary placeholder for client input
 	private PrintStream output; //message to send to client (Start or Stop flags)
     private static final int port = 8000; //server socket port
+    public double secondsPerLoop = 0.02;
     
     public boolean startAuto = false; //flag to start the autonomous round
 

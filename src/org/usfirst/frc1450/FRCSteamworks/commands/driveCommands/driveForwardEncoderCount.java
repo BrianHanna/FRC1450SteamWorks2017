@@ -77,7 +77,7 @@ public class driveForwardEncoderCount extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return (Robot.drives.ReachedPosition(217.3084112149533 * 3.0) || (loopCounter >= m_timeoutSeconds /.02));
+        return (Robot.drives.ReachedPosition(217.3084112149533 * 3.0) || (loopCounter >= m_timeoutSeconds / 0.02));
     }
 
     // Called once after isFinished returns true

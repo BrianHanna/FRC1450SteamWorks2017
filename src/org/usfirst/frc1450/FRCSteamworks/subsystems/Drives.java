@@ -89,6 +89,33 @@ public class Drives extends Subsystem {
     	server.setSource(rearCamera);
     }
     
+    public double GetGyroAngle()
+    {
+    	double newGyroAngle;
+    	newGyroAngle = gyro.getAngle();
+    	//358 == 0
+    	// 362 == 1
+    	//-358 == 0
+    	// -362 == 1
+    	
+    	int divisor = (int) Math.abs(newGyroAngle / 360.0);
+    	if (newGyroAngle < 0)
+    	{
+    		divisor++;
+    		newGyroAngle += 360.0 * divisor;
+    	}
+    	else
+    	{
+    		newGyroAngle -= 360.0 * divisor;
+    	}
+    	return newGyroAngle;
+    }
+    
+    public void ClearGyroAngle()
+    {
+    	gyro.reset();
+    }
+    
     //maxSpeed = 2681Hz
     public double driveSpeedCeiling = 2681;
     
@@ -151,8 +178,8 @@ public class Drives extends Subsystem {
     			6, 
     			0);
     	leftFrontMotor.set(0.0);
-    	leftFrontMotor.configNominalOutputVoltage(0.0, 0.0);
-    	leftFrontMotor.configPeakOutputVoltage(12.0, -12.0);
+    	//leftFrontMotor.configNominalOutputVoltage(0.0, 0.0);
+    	//leftFrontMotor.configPeakOutputVoltage(12.0, -12.0);
     	//
     	rightFrontMotor.setProfile(0);
     	rightFrontMotor.setEncPosition(0);
@@ -170,8 +197,8 @@ public class Drives extends Subsystem {
     			6, 
     			0);
     	rightFrontMotor.set(0.0);
-    	rightFrontMotor.configNominalOutputVoltage(0.0, 0.0);
-    	rightFrontMotor.configPeakOutputVoltage(12.0, -12.0);
+    	//rightFrontMotor.configNominalOutputVoltage(0.0, 0.0);
+    	//rightFrontMotor.configPeakOutputVoltage(12.0, -12.0);
     }
     
     public void SetPositionControl()
@@ -225,6 +252,8 @@ public class Drives extends Subsystem {
     {
     	leftFrontMotor.changeControlMode(TalonControlMode.Voltage);
     	rightFrontMotor.changeControlMode(TalonControlMode.Voltage);
+    	leftRearMotor.changeControlMode(TalonControlMode.Voltage);
+    	rightRearMotor.changeControlMode(TalonControlMode.Voltage);
     }
     
     double leftTarget_, rightTarget_;

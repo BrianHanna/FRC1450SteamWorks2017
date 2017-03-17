@@ -20,6 +20,8 @@ public class turnRight extends Command {
 
     private double m_turnAngle;
     private double m_timeoutSeconds;
+    private int loopCount = 0;
+    private double currentError = 180.0;
     
     public turnRight(double turnAngle, double timeoutSeconds) {
 
@@ -31,27 +33,41 @@ public class turnRight extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	loopCount = 0;
+    	Robot.drives.ClearGyroAngle();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.drives.teleopDrive(m_turnAngle, 45);
-        try {
-			Robot.drives.wait((long)m_timeoutSeconds);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        Robot.drives.teleopDrive(0, 0);
+    	double currentAngle = Robot.drives.GetGyroAngle(); 
+    	currentError = m_turnAngle - currentAngle; 
+    	if (currentAngle >= 360.0)
+    	{
+    		currentError -= 360.0;
+    	}
+    	else if (currentAngle < -360.0)
+    	{
+    		currentError += 360.0;
+    	}
+    	if (currentError > 0.0)
+    	{
+    		Robot.drives.teleopDrive(0.25, 1.0);
+    	}
+    	else if (currentError < 0.0)
+    	{
+    		Robot.drives.teleopDrive(0.25, -1.0);
+    	}
+    	loopCount++;
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+    	return ((Math.abs(currentError) < 5.0) || (loopCount > (m_timeoutSeconds / 0.02)));
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.drives.teleopDrive(0.0,0.0);
     }
 
     // Called when another command which requires one or more of the same
