@@ -11,6 +11,7 @@
 
 package org.usfirst.frc1450.FRCSteamworks.subsystems;
 
+import org.usfirst.frc1450.FRCSteamworks.Robot;
 import org.usfirst.frc1450.FRCSteamworks.RobotMap;
 import org.usfirst.frc1450.FRCSteamworks.commands.*;
 import org.usfirst.frc1450.FRCSteamworks.commands.driveCommands.TeleopDriveCommand;
@@ -70,9 +71,15 @@ public class Drives extends Subsystem {
     public void initCamera()
     {
     	frontCamera = CameraServer.getInstance().startAutomaticCapture(0);
-    	frontCamera.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
+    	frontCamera.setVideoMode(PixelFormat.kMJPEG, 320, 240, 15);
+    	frontCamera.setWhiteBalanceAuto();
+    	frontCamera.setExposureAuto();
+    	frontCamera.setBrightness(30);
     	rearCamera = CameraServer.getInstance().startAutomaticCapture(1);
-    	rearCamera.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
+    	rearCamera.setVideoMode(PixelFormat.kMJPEG, 320, 240, 15);
+    	rearCamera.setWhiteBalanceAuto();
+    	rearCamera.setExposureAuto();
+    	rearCamera.setBrightness(30);
     	server = CameraServer.getInstance().getServer();
     	gyro = new ADXRS450_Gyro();
     }
@@ -98,16 +105,12 @@ public class Drives extends Subsystem {
     	//-358 == 0
     	// -362 == 1
     	
-    	int divisor = (int) Math.abs(newGyroAngle / 360.0);
+    	int divisor = (int) (newGyroAngle / 360.0);
     	if (newGyroAngle < 0)
     	{
-    		divisor++;
-    		newGyroAngle += 360.0 * divisor;
+    		divisor--;
     	}
-    	else
-    	{
-    		newGyroAngle -= 360.0 * divisor;
-    	}
+    	newGyroAngle -= 360.0 * divisor;
     	return newGyroAngle;
     }
     
@@ -305,6 +308,7 @@ public class Drives extends Subsystem {
     public void teleopDrive(double xAxis, double yAxis) {
     	SmartDashboard.putNumber("leftFrontEncoder", leftFrontMotor.getEncPosition());
     	SmartDashboard.putNumber("rightFrontEncoder", rightFrontMotor.getEncPosition());
+    	SmartDashboard.putDouble("xaxisDriver", xAxis);
     	double leftSpd = leftFrontMotor.getEncVelocity();
     	if (maxSpeedFound < leftSpd)
     	{
@@ -333,6 +337,9 @@ public class Drives extends Subsystem {
     		SmartDashboard.putNumber("maxSpeed", maxSpeed);
     	}
     	robotDrive.arcadeDrive(drivesDirection * yAxis /** maxSpeed / 100*/, xAxis);
+    	frontCamera.setBrightness((int) SmartDashboard.getNumber("BriansNotSoBright", 30));
+    	rearCamera.setBrightness((int) SmartDashboard.getNumber("BriansNotSoBright", 30));
+    	SmartDashboard.putNumber("angle", Robot.drives.GetGyroAngle());
     	if (doDrivesDebug)
     	{
 	    	SmartDashboard.putNumber("leftFrontVolt", leftFrontMotor.getOutputVoltage());

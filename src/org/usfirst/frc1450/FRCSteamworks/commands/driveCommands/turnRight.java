@@ -11,6 +11,8 @@
 
 package org.usfirst.frc1450.FRCSteamworks.commands.driveCommands;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc1450.FRCSteamworks.Robot;
 
 /**
@@ -40,22 +42,23 @@ public class turnRight extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	double currentAngle = Robot.drives.GetGyroAngle(); 
-    	currentError = m_turnAngle - currentAngle; 
-    	if (currentAngle >= 360.0)
+    	// 0 <= currentAngle <= 359
+    	// -180 <= m_turnAngle <= 180
+    	currentError = currentAngle - m_turnAngle;
+    	// -180 <= currentError <= 539
+    	// 539 - 360 = 
+    	if (currentError > 180)
     	{
-    		currentError -= 360.0;
+    		currentError -= 360;
     	}
-    	else if (currentAngle < -360.0)
-    	{
-    		currentError += 360.0;
-    	}
+    	SmartDashboard.putNumber("angleErr", currentError);
     	if (currentError > 0.0)
     	{
-    		Robot.drives.teleopDrive(0.25, 1.0);
+    		Robot.drives.teleopDrive(-0.6, 0.0);
     	}
     	else if (currentError < 0.0)
     	{
-    		Robot.drives.teleopDrive(0.25, -1.0);
+    		Robot.drives.teleopDrive(0.6, 0.0);
     	}
     	loopCount++;
     }

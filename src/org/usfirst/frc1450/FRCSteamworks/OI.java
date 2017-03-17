@@ -114,7 +114,7 @@ public class OI {
     	
         copilotJoystick = new Joystick(1);
         forwardClimbButton = new JoystickButton(copilotJoystick, xBoxAButton);
-        forwardClimbButton.whenPressed(new ClimbCommand());
+        forwardClimbButton.whileHeld(new ClimbCommand());
         forwardClimbButton.whenReleased(new DisableClimber());
         gearReleaseButton = new JoystickButton(copilotJoystick, xBoxBButton);
         gearReleaseButton.whenPressed(new closeGearRelease());
@@ -166,6 +166,10 @@ public class OI {
     
     public double getCopilotJoystickXAxis(){
     	return copilotJoystick.getRawAxis(xBoxLeftX);
+    }
+    
+    public double getRightCopilotJoystick(){
+    	return copilotJoystick.getRawAxis(xBoxRightY);
     }
 
 

@@ -41,10 +41,10 @@ public class driveForwardEncoderCount extends Command {
     	Robot.drives.SetVelocityControl();
     	if (m_encoderCount / 217.3084112149533 > 12)
     	{
-    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.25, Robot.drives.driveSpeedCeiling * 0.25, m_encoderCount, m_encoderCount);
+    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.5, Robot.drives.driveSpeedCeiling * 0.25, m_encoderCount, m_encoderCount);
     	}else
     	{
-    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.125, Robot.drives.driveSpeedCeiling * 0.125, m_encoderCount, m_encoderCount);
+    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.5, Robot.drives.driveSpeedCeiling * 0.125, m_encoderCount, m_encoderCount);
     	}
     	
     	/*

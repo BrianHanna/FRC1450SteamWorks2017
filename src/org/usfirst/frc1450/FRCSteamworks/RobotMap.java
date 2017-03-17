@@ -126,7 +126,9 @@ public class RobotMap {
         //LiveWindow.addActuator("Climber", "ClimberMotor", climberClimberMotor);
         climberClimberMotor.changeControlMode(TalonControlMode.Voltage);
         climberClimberMotor.configMaxOutputVoltage(12.0);
-        climberClimberMotor.enableBrakeMode(true);
+        //climberClimberMotor.enableBrakeMode(true);
+        //climberClimberMotor.setCurrentLimit(40);
+        //climberClimberMotor.EnableCurrentLimit(true);
         
         gearReleaseLeftGearReleaseSolenoid = new DoubleSolenoid(0, 0, 1);
         //LiveWindow.addActuator("GearRelease", "LeftGearReleaseSolenoid", gearReleaseLeftGearReleaseSolenoid);
