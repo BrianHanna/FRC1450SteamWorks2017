@@ -38,13 +38,22 @@ public class driveForwardEncoderCount extends Command {
     protected void initialize() {
     	
     	//VelocityControlMethod
+    	Robot.drives.ClearGyroAngle();
     	Robot.drives.SetVelocityControl();
     	if (m_encoderCount / 217.3084112149533 > 12)
     	{
-    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.5, Robot.drives.driveSpeedCeiling * 0.25, m_encoderCount, m_encoderCount);
+    		Robot.drives.GoPositionWithSpeed(
+    				Robot.drives.driveSpeedCeiling * 0.5,
+    				Robot.drives.driveSpeedCeiling * 0.5,
+    				m_encoderCount,
+    				m_encoderCount);
     	}else
     	{
-    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.5, Robot.drives.driveSpeedCeiling * 0.125, m_encoderCount, m_encoderCount);
+    		Robot.drives.GoPositionWithSpeed(
+    				Robot.drives.driveSpeedCeiling * 0.125,
+    				Robot.drives.driveSpeedCeiling * 0.125,
+    				m_encoderCount,
+    				m_encoderCount);
     	}
     	
     	/*
@@ -59,14 +68,56 @@ public class driveForwardEncoderCount extends Command {
     protected void execute() {
     	loopCounter++;
     	SmartDashboard.putNumber("LoopCount", loopCounter);
+    	double leftSpeedAdjust = 1.0;
+    	double rightSpeedAdjust = 1.0;
+    	
+    	double currentAngle = Robot.drives.GetGyroAngle(); 
+    	// 0 <= currentAngle <= 359
+    	// -180 <= m_turnAngle <= 180
+    	// -180 <= currentError <= 539
+    	// 539 - 360 = 
+    	if (currentAngle > 180)
+    	{
+    		currentAngle -= 360;
+    	}
+    	
+    	double correctionAmplifier = 2.0;
+    	
+    	
+    	//not enough correction.  need to boost
+    	if (currentAngle < 0)
+    	{
+    		rightSpeedAdjust = 1.0 - Math.abs(currentAngle) * correctionAmplifier / 180.0;
+    	}
+    	else
+    	{
+    		leftSpeedAdjust = 1.0 - Math.abs(currentAngle) * correctionAmplifier / 180.0;
+    	}
     	
     	//VelocityControlMethod
     	if (Math.abs((-1.0 * m_encoderCount) - Robot.drives.GetLeftPosition()) / 217.3084112149533 < 12)
     	{
-    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.125, Robot.drives.driveSpeedCeiling * 0.125, m_encoderCount, m_encoderCount);
-    	} else if (Math.abs(m_encoderCount - Robot.drives.GetLeftPosition()) / 217.3084112149533 < 12)
+    		Robot.drives.GoPositionWithSpeed(
+    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
+    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
+    				m_encoderCount,
+    				m_encoderCount);
+    	}
+    	else if (Math.abs(m_encoderCount - Robot.drives.GetLeftPosition()) / 217.3084112149533 < 12)
     	{
-    		Robot.drives.GoPositionWithSpeed(Robot.drives.driveSpeedCeiling * 0.125, Robot.drives.driveSpeedCeiling * 0.125, m_encoderCount, m_encoderCount);
+    		Robot.drives.GoPositionWithSpeed(
+    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
+    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
+    				m_encoderCount,
+    				m_encoderCount);
+    	}
+    	else
+    	{
+    		Robot.drives.GoPositionWithSpeed(
+    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.5,
+    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.5,
+    				m_encoderCount,
+    				m_encoderCount);
     	}
     	
     	SmartDashboard.putNumber("leftErr", Robot.drives.GetLeftError());

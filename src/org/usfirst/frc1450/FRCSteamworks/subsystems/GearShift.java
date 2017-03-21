@@ -69,6 +69,11 @@ public class GearShift extends Subsystem {
     	gearShiftMotor.setEncPosition(maxEncPos);
     }
     
+    public double GetEncPosition()
+    {
+    	return gearShiftMotor.getEncPosition();
+    }
+    
     private int maxEncPos = 4900;	//4.679"
     public double encPerInch = 1047.1794871794871251412491781723;
     public int middleCount = 2734;

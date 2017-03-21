@@ -30,6 +30,7 @@ import org.usfirst.frc1450.FRCSteamworks.commands.*;
 import org.usfirst.frc1450.FRCSteamworks.commands.driveCommands.TeleopDriveCommand;
 import org.usfirst.frc1450.FRCSteamworks.commands.driveCommands.driveForwardEncoderCount;
 import org.usfirst.frc1450.FRCSteamworks.commands.driveCommands.turnRight;
+import org.usfirst.frc1450.FRCSteamworks.commands.gearShiftCommands.HomeGearShift;
 import org.usfirst.frc1450.FRCSteamworks.subsystems.*;
 
 
@@ -93,6 +94,8 @@ public class Robot extends IterativeRobot{
         chooser.addObject("Left Hook", new leftHookAutonomousCommandGroup());
         chooser.addObject("Right Hook", new rightHookAutonomousCommandGroup());
         chooser.addObject("Just Turn Right", new turnRight(60.0, 30.0));
+        chooser.addObject("StraightAdjust", new driveForwardEncoderCount(Robot.drives.encodersPerInch*770.5, 30.0));
+        chooser.addObject("Home Gear Shift", new HomeGearShift(15.0));
         SmartDashboard.putData("Autonomous Mode Chooser", chooser);
         autonomousCommand = new driveForwardEncoderCount(Robot.drives.encodersPerInch*78.5, 10.0);
         SmartDashboard.putNumber("climbVolts", 12.0);

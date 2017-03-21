@@ -51,21 +51,22 @@ public class turnRight extends Command {
     	{
     		currentError -= 360;
     	}
+    	//0.58 overshot
     	SmartDashboard.putNumber("angleErr", currentError);
     	if (currentError > 0.0)
     	{
-    		Robot.drives.teleopDrive(-0.6, 0.0);
+    		Robot.drives.teleopDrive(-0.57, 0.0);
     	}
     	else if (currentError < 0.0)
     	{
-    		Robot.drives.teleopDrive(0.6, 0.0);
+    		Robot.drives.teleopDrive(0.57, 0.0);
     	}
     	loopCount++;
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	return ((Math.abs(currentError) < 5.0) || (loopCount > (m_timeoutSeconds / 0.02)));
+    	return ((Math.abs(currentError) < 3.0) || (loopCount > (m_timeoutSeconds / 0.02)));
     }
 
     // Called once after isFinished returns true
