@@ -80,8 +80,10 @@ public class GearShift extends Subsystem {
     
     public void teleopGearShift(double xAxis) {
     	SmartDashboard.putNumber("gearShiftEncoder", gearShiftMotor.getEncPosition());
+    	SmartDashboard.putNumber("ShifterValue", xAxis);
     	if (!leftLimitSwitch.get())
     	{
+    		SmartDashboard.putString("LimitSwitchState", "Open");
     		gearShiftMotor.setEncPosition(0);
     		if (xAxis >= 0)
     		{
@@ -101,6 +103,7 @@ public class GearShift extends Subsystem {
     	}
     	else
     	{
+    		SmartDashboard.putString("LimitSwitchState", "Closed");
     		if (xAxis >= 0)
     		{
     			if (gearShiftMotor.getEncPosition() < maxEncPos)
