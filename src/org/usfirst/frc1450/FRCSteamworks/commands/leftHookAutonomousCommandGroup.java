@@ -34,11 +34,11 @@ public class leftHookAutonomousCommandGroup extends CommandGroup {
     public leftHookAutonomousCommandGroup() {
 
     	//addParallel(new HomeGearShift(8.0));													//could add this to home gear shift in parallel with first move
-        addSequential(new AutonomousArcadeDrive((95.0) * Robot.drives.encodersPerInch, 8.0));
+        addSequential(new AutonomousArcadeDrive((99.1) * Robot.drives.encodersPerInch, 8.0));
         addSequential(new Turn(60.0, 3.0));
         //addSequential(new CameraBasedDrive(6.0));
         //addSequential(new CameraBasedTurn(6.0));
-        addSequential(new AutonomousArcadeDrive((35.0) * Robot.drives.encodersPerInch, 4.0));
+        addSequential(new AutonomousArcadeDrive((15.0) * Robot.drives.encodersPerInch, 4.0));
  
     } 
 }
