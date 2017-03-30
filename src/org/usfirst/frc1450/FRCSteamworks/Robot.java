@@ -162,6 +162,15 @@ public class Robot extends IterativeRobot{
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
+    	if (server != null)
+    	{
+	    	try {
+				server.close();							//try to close server. maybe we should send shutdown command to R.Pi
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         if (autonomousCommand != null) autonomousCommand.cancel();
         Robot.drives.DisableBraking();				//disable braking as it is stressful to motors/controllers
         Robot.drives.StopVelocityControl();			//make sure robot isn't trying to go anywhere
