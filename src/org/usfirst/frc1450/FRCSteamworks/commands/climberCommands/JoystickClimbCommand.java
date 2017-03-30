@@ -5,13 +5,11 @@ import org.usfirst.frc1450.FRCSteamworks.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ *	This command takes in joystick feedback to adjust climber speed
  */
 public class JoystickClimbCommand extends Command {
 
     public JoystickClimbCommand() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     	requires(Robot.climber);
     }
 

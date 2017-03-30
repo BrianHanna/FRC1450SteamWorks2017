@@ -10,7 +10,6 @@
 
 
 package org.usfirst.frc1450.FRCSteamworks.commands.driveCommands;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -18,19 +17,21 @@ import org.usfirst.frc1450.FRCSteamworks.Robot;
 import org.usfirst.frc1450.FRCSteamworks.RobotMap;
 
 /**
- *
+ *	Attempts to drive forward using PID loops.  This routine turned slightly so we switched to AutonomousArcadeDrive
  */
 public class driveForwardEncoderCount extends Command {
 
     private double m_encoderCount;
     private double m_timeoutSeconds;
     private int loopCounter;
+    private double forward = 1.0;
+    private double initialAngle;
+    private double slowSpeed = 0.1;
  
     public driveForwardEncoderCount(double encoderCount, double timeoutSeconds) {
         m_encoderCount = encoderCount;
         m_timeoutSeconds = timeoutSeconds;
         loopCounter = 0;
-
         requires(Robot.drives);
     }
 
@@ -38,20 +39,21 @@ public class driveForwardEncoderCount extends Command {
     protected void initialize() {
     	
     	//VelocityControlMethod
-    	Robot.drives.ClearGyroAngle();
+    	initialAngle = Robot.drives.GetGyroAngle();
     	Robot.drives.SetVelocityControl();
-    	if (m_encoderCount / 217.3084112149533 > 12)
+    	slowSpeed = SmartDashboard.getNumber("SlowSpeed", 0.1);
+    	if (Math.abs(m_encoderCount / 217.3084112149533) > 12)
     	{
     		Robot.drives.GoPositionWithSpeed(
-    				Robot.drives.driveSpeedCeiling * 0.5,
-    				Robot.drives.driveSpeedCeiling * 0.5,
+    				Robot.drives.driveSpeedCeiling * slowSpeed * forward,
+    				Robot.drives.driveSpeedCeiling * slowSpeed * forward,
     				m_encoderCount,
     				m_encoderCount);
     	}else
     	{
     		Robot.drives.GoPositionWithSpeed(
-    				Robot.drives.driveSpeedCeiling * 0.125,
-    				Robot.drives.driveSpeedCeiling * 0.125,
+    				Robot.drives.driveSpeedCeiling * slowSpeed * forward,
+    				Robot.drives.driveSpeedCeiling * slowSpeed * forward,
     				m_encoderCount,
     				m_encoderCount);
     	}
@@ -60,7 +62,6 @@ public class driveForwardEncoderCount extends Command {
     	Robot.drives.SetPositionControl();
     	Robot.drives.GoPosition(m_encoderCount, m_encoderCount);
     	*/
-    	SmartDashboard.putString("CommandState", "Init");
     	loopCounter = 0;
     }
 
@@ -71,59 +72,71 @@ public class driveForwardEncoderCount extends Command {
     	double leftSpeedAdjust = 1.0;
     	double rightSpeedAdjust = 1.0;
     	
-    	double currentAngle = Robot.drives.GetGyroAngle(); 
-    	// 0 <= currentAngle <= 359
-    	// -180 <= m_turnAngle <= 180
-    	// -180 <= currentError <= 539
-    	// 539 - 360 = 
+    	SmartDashboard.putNumber("angle", Robot.drives.GetGyroAngle());
+    	
+    	// 0 <= initial angle <= 359
+    	double currentAngle = Robot.drives.GetGyroAngle() - initialAngle; 
+    	// -359 <= currentAngle <= 359
     	if (currentAngle > 180)
     	{
     		currentAngle -= 360;
     	}
+    	else if (currentAngle < -180)
+    	{
+    		currentAngle += 360;
+    	}
     	
-    	double correctionAmplifier = 2.0;
+    	SmartDashboard.putNumber("resultAngle", Robot.drives.GetGyroAngle());
+    	
+    	double correctionAmplifier = SmartDashboard.getNumber("correctionAmp", 6.0);
     	
     	
     	//not enough correction.  need to boost
     	if (currentAngle < 0)
     	{
+    		currentAngle += 360.0;
     		rightSpeedAdjust = 1.0 - Math.abs(currentAngle) * correctionAmplifier / 180.0;
+    		if (rightSpeedAdjust > 0.0)
+    		{
+    			rightSpeedAdjust = 0.0;
+    		}
     	}
     	else
     	{
     		leftSpeedAdjust = 1.0 - Math.abs(currentAngle) * correctionAmplifier / 180.0;
+    		if (leftSpeedAdjust < 0.0)
+    		{
+    			leftSpeedAdjust = 0.0;
+    		}
     	}
     	
     	//VelocityControlMethod
     	if (Math.abs((-1.0 * m_encoderCount) - Robot.drives.GetLeftPosition()) / 217.3084112149533 < 12)
     	{
     		Robot.drives.GoPositionWithSpeed(
-    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
-    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
+    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * slowSpeed * forward,
+    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * slowSpeed * forward,
     				m_encoderCount,
     				m_encoderCount);
     	}
     	else if (Math.abs(m_encoderCount - Robot.drives.GetLeftPosition()) / 217.3084112149533 < 12)
     	{
     		Robot.drives.GoPositionWithSpeed(
-    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
-    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.125,
+    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * slowSpeed * forward,
+    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * slowSpeed * forward,
     				m_encoderCount,
     				m_encoderCount);
     	}
     	else
     	{
     		Robot.drives.GoPositionWithSpeed(
-    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.5,
-    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * 0.5,
+    				leftSpeedAdjust * Robot.drives.driveSpeedCeiling * slowSpeed * forward,
+    				rightSpeedAdjust * Robot.drives.driveSpeedCeiling * slowSpeed * forward,
     				m_encoderCount,
     				m_encoderCount);
     	}
-    	
-    	SmartDashboard.putNumber("leftErr", Robot.drives.GetLeftError());
-    	SmartDashboard.putNumber("rightErr", Robot.drives.GetRightError());
-    	SmartDashboard.putNumber("leftSet", Robot.drives.GetLeftSetPt());
-    	SmartDashboard.putNumber("rightSet", Robot.drives.GetRightSetPt());
+    	SmartDashboard.putNumber("leftFrontSpeed", RobotMap.drivesLeftFrontMotor.getEncVelocity());
+    	SmartDashboard.putNumber("rightFrontSpeed", RobotMap.drivesRightFrontMotor.getEncVelocity());
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -136,7 +149,6 @@ public class driveForwardEncoderCount extends Command {
     	
     	//VelocityControlMethod
     	Robot.drives.StopVelocityControl();
-    	
     	Robot.drives.VoltageControl();
     	SmartDashboard.putString("CommandState", "Done");
     }

@@ -100,6 +100,7 @@ public class Drives extends Subsystem {
     {
     	double newGyroAngle;
     	newGyroAngle = gyro.getAngle();
+    	SmartDashboard.putNumber("rawAngle", newGyroAngle);
     	//358 == 0
     	// 362 == 1
     	//-358 == 0
@@ -165,12 +166,11 @@ public class Drives extends Subsystem {
     
     public void SetVelocityControl()
     {
+    	leftFrontMotor.disable();
+    	leftRearMotor.disable();
     	leftFrontMotor.setProfile(0);
     	leftFrontMotor.setEncPosition(0);
-    	leftFrontMotor.changeControlMode(TalonControlMode.Speed);
-    	leftRearMotor.changeControlMode(TalonControlMode.Follower);
-    	leftRearMotor.set(leftFrontMotor.getDeviceID());
-    	leftFrontMotor.enable();
+    	//leftFrontMotor.enable();
     	leftFrontMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
     	leftFrontMotor.setPID(
     			SmartDashboard.getNumber("PropGain", 0.22), 
@@ -178,28 +178,37 @@ public class Drives extends Subsystem {
     			SmartDashboard.getNumber("DerGain", 0.0), 
     			SmartDashboard.getNumber("FGain", 0.1027), 
     			0, 
-    			6, 
+    			0, 
     			0);
     	leftFrontMotor.set(0.0);
     	//leftFrontMotor.configNominalOutputVoltage(0.0, 0.0);
     	//leftFrontMotor.configPeakOutputVoltage(12.0, -12.0);
     	//
+    	rightFrontMotor.disable();
+    	rightRearMotor.disable();
     	rightFrontMotor.setProfile(0);
     	rightFrontMotor.setEncPosition(0);
-    	rightFrontMotor.changeControlMode(TalonControlMode.Speed);
-    	rightRearMotor.changeControlMode(TalonControlMode.Follower);
-    	rightRearMotor.set(rightFrontMotor.getDeviceID());
-    	rightFrontMotor.enable();
+    	//rightFrontMotor.enable();
     	rightFrontMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
     	rightFrontMotor.setPID(
     			SmartDashboard.getNumber("PropGain", 0.22), 
-    			SmartDashboard.getNumber("IntGain", 0.0022), 
+    			SmartDashboard.getNumber("IntGain", 0.0022) * 1.0, 
     			SmartDashboard.getNumber("DerGain", 0.0), 
     			SmartDashboard.getNumber("FGain", 0.1027), 
     			0, 
-    			6, 
+    			0, 
     			0);
     	rightFrontMotor.set(0.0);
+    	leftFrontMotor.changeControlMode(TalonControlMode.Speed);
+    	leftRearMotor.changeControlMode(TalonControlMode.Follower);
+    	leftRearMotor.set(leftFrontMotor.getDeviceID());
+    	rightFrontMotor.changeControlMode(TalonControlMode.Speed);
+    	rightRearMotor.changeControlMode(TalonControlMode.Follower);
+    	rightRearMotor.set(rightFrontMotor.getDeviceID());
+    	leftFrontMotor.enable();
+    	rightFrontMotor.enable();
+    	leftRearMotor.enable();
+    	rightRearMotor.enable();
     	//rightFrontMotor.configNominalOutputVoltage(0.0, 0.0);
     	//rightFrontMotor.configPeakOutputVoltage(12.0, -12.0);
     }
@@ -269,7 +278,7 @@ public class Drives extends Subsystem {
     }
     
     public void GoPositionWithSpeed(double leftSpeedTarget, double rightTargetSpeed, double leftTargetPosition, double rightTargetPosition){
-    	double leftSpeedTarget_ = -leftSpeedTarget;
+    	double leftSpeedTarget_ = -leftSpeedTarget /** 0.9*/;
     	double rightTargetSpeed_ = rightTargetSpeed;
     	leftTarget_ = -leftTargetPosition;
     	rightTarget_ = rightTargetPosition;
@@ -293,9 +302,15 @@ public class Drives extends Subsystem {
     //26.75" forward = -5753 leftfront encoders = 5873 rightfront encoders
     //26.75" approximately = 5813
     //so conversion = 217.3084112149533
+    //19160
     public double encodersPerInch = 217.3084112149533;
     
     double maxSpeedFound = 0;
+    
+    public boolean IsMoving()
+    {
+    	return ((leftFrontMotor.getEncVelocity() != 0.0) || (rightFrontMotor.getEncVelocity() != 0.0));
+    }
     
     public void DisableBraking()
     {
@@ -305,10 +320,17 @@ public class Drives extends Subsystem {
     	rightRearMotor.enableBrakeMode(false);
     }
     
+    public void EnableBraking()
+    {
+    	leftFrontMotor.enableBrakeMode(true);
+    	rightFrontMotor.enableBrakeMode(true);
+    	leftRearMotor.enableBrakeMode(true);
+    	rightRearMotor.enableBrakeMode(true);
+    }
+    
     public void teleopDrive(double xAxis, double yAxis) {
     	SmartDashboard.putNumber("leftFrontEncoder", leftFrontMotor.getEncPosition());
     	SmartDashboard.putNumber("rightFrontEncoder", rightFrontMotor.getEncPosition());
-    	SmartDashboard.putDouble("xaxisDriver", xAxis);
     	double leftSpd = leftFrontMotor.getEncVelocity();
     	if (maxSpeedFound < leftSpd)
     	{
@@ -336,7 +358,26 @@ public class Drives extends Subsystem {
     		maxSpeed = 100;
     		SmartDashboard.putNumber("maxSpeed", maxSpeed);
     	}
-    	robotDrive.arcadeDrive(drivesDirection * yAxis /** maxSpeed / 100*/, xAxis);
+    	double driveSpeedScale = 1.0;
+    	if (Robot.oi.driveJoystick.getRawButton(Robot.oi.xBoxLeftButton))
+    	{
+    		if (Robot.oi.driveJoystick.getRawButton(Robot.oi.xBoxRightButton))
+    		{
+    			driveSpeedScale = 0.5;
+    		}
+    		else
+    		{
+    			driveSpeedScale = 0.33;
+    		}
+    	}
+    	else
+    	{
+    		if (Robot.oi.driveJoystick.getRawButton(Robot.oi.xBoxRightButton))
+    		{
+    			driveSpeedScale = 0.75;
+    		}
+    	}
+    	robotDrive.arcadeDrive(drivesDirection * yAxis * driveSpeedScale /** maxSpeed / 100*/, xAxis);
     	frontCamera.setBrightness((int) SmartDashboard.getNumber("BriansNotSoBright", 30));
     	rearCamera.setBrightness((int) SmartDashboard.getNumber("BriansNotSoBright", 30));
     	SmartDashboard.putNumber("angle", Robot.drives.GetGyroAngle());

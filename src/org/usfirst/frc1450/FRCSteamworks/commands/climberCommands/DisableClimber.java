@@ -5,13 +5,11 @@ import org.usfirst.frc1450.FRCSteamworks.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ *	This command disables the climber
  */
 public class DisableClimber extends Command {
 
     public DisableClimber() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     	requires(Robot.climber);
     }
 

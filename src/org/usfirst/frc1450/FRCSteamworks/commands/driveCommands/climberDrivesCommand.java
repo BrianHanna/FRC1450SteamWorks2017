@@ -5,13 +5,11 @@ import org.usfirst.frc1450.FRCSteamworks.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ *	This command switches driver joystick reference and selected webcam to drive using the rear of the robot as the front
  */
 public class climberDrivesCommand extends Command {
 
     public climberDrivesCommand() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     	requires(Robot.drives);
     }
 

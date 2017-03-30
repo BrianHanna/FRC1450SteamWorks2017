@@ -32,14 +32,19 @@ public class HomeGearShift extends Command {
     protected void execute() {
     	if (foundSensor)
     	{
-    		if (Robot.gearShift.GetEncPosition() >= Robot.gearShift.middleCount)
+    		if (Robot.gearShift.GetEncPosition() >= Robot.gearShift.middleCount + (Robot.gearShift.encPerInch * 0.5))
     		{
-    			SmartDashboard.putString("shiftState", "Done");
-    			Robot.gearShift.teleopGearShift(0.0);
+    			//SmartDashboard.putString("shiftState", "MovingToMiddle");
+    			Robot.gearShift.teleopGearShift(-0.7);
+    		}
+    		else if (Robot.gearShift.GetEncPosition() <= Robot.gearShift.middleCount - (Robot.gearShift.encPerInch * 0.5))
+    		{
+    			//SmartDashboard.putString("shiftState", "MovingToMiddle");
+    			Robot.gearShift.teleopGearShift(0.7);
     		}
     		else
     		{
-    			SmartDashboard.putString("shiftState", "MovingToMiddle");
+    			//SmartDashboard.putString("shiftState", "Done");
     			Robot.gearShift.teleopGearShift(0.7);
     		}
     	}
@@ -48,11 +53,11 @@ public class HomeGearShift extends Command {
     		if (Robot.gearShift.GetEncPosition() == 0)
     		{
     			foundSensor = true;
-    			SmartDashboard.putString("shiftState", "FoundHome");
+    			//SmartDashboard.putString("shiftState", "FoundHome");
     		}
     		else
     		{
-    			SmartDashboard.putString("shiftState", "MovingToHome");
+    			//SmartDashboard.putString("shiftState", "MovingToHome");
     		}
     		Robot.gearShift.teleopGearShift(-0.7);
     	}

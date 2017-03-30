@@ -5,13 +5,11 @@ import org.usfirst.frc1450.FRCSteamworks.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ *	This command runs the climber in the forward direction
  */
 public class ClimbCommand extends Command {
 
     public ClimbCommand() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     	requires(Robot.climber);
     }
 

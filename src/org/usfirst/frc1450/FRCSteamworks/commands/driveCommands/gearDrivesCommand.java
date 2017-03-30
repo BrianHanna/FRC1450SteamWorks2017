@@ -5,13 +5,11 @@ import org.usfirst.frc1450.FRCSteamworks.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ *	This command switches the joystick and camera to use the front of the robot as the front
  */
 public class gearDrivesCommand extends Command {
 
     public gearDrivesCommand() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     	requires(Robot.drives);
     }
 
