@@ -29,11 +29,11 @@ public class rightHookAutonomousCommandGroup extends CommandGroup {
 	//turn left 60 degrees and then drive forward a separate fixed distance based on field geometries. 
     public rightHookAutonomousCommandGroup() {
 
-        addSequential(new AutonomousArcadeDrive((99.1) * Robot.drives.encodersPerInch,8));
+        addSequential(new AutonomousArcadeDrive((95.0) * Robot.drives.encodersPerInch,8));
         addSequential(new Turn(-60.0, 3.0));
         //addSequential(new CameraBasedDrive(6.0));
         //addSequential(new CameraBasedTurn(6.0));
-        addSequential(new AutonomousArcadeDrive((15.0) * Robot.drives.encodersPerInch, 4.0));
+        addSequential(new AutonomousArcadeDrive((35.0) * Robot.drives.encodersPerInch, 4.0));
  
     } 
 }
